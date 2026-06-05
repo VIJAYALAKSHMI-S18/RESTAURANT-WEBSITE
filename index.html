@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dakshin Flavors - Restaurant POS & Admin Dashboard</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Dakshin Flavors - Professional POS billing, menu management (CRUD), and monthly sales analytics dashboard.">
+  <meta name="keywords" content="restaurant, billing, pos, south indian, menu management, sales reports">
+  <meta name="author" content="Dakshin Flavors">
+
+  <!-- Google Fonts (Outfit & Plus Jakarta Sans) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+  
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  
+  <!-- App Container -->
+  <div class="app-layout">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">
+          <i data-lucide="utensils-crosslines"></i>
+        </div>
+        <div class="brand-info">
+          <h1>Dakshin Flavors</h1>
+          <span class="brand-tag">POS & Admin</span>
+        </div>
+      </div>
+      
+      <nav class="nav-menu">
+        <button class="nav-item active" id="btn-tab-order" data-tab="tab-order">
+          <i data-lucide="shopping-bag"></i>
+          <span>Order POS</span>
+        </button>
+        <button class="nav-item" id="btn-tab-menu" data-tab="tab-menu">
+          <i data-lucide="cooking-pot"></i>
+          <span>Manage Menu</span>
+        </button>
+        <button class="nav-item" id="btn-tab-reports" data-tab="tab-reports">
+          <i data-lucide="bar-chart-3"></i>
+          <span>Sales Dashboard</span>
+        </button>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <div class="cashier-card">
+          <div class="avatar">
+            <i data-lucide="user"></i>
+          </div>
+          <div class="info">
+            <span class="name">Cashier Counter 1</span>
+            <span class="status-indicator">Online</span>
+          </div>
+        </div>
+        <div class="live-clock" id="live-clock">12:00:00 PM</div>
+      </div>
+    </aside>
+    
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- Tab 1: Order POS (Customer Order Screen) -->
+      <section id="tab-order" class="tab-pane active">
+        <header class="view-header">
+          <div class="header-left">
+            <h2>Order Screen</h2>
+            <p class="subtitle">Quick-tap items to add them to the bill</p>
+          </div>
+          <div class="header-right">
+            <div class="search-bar">
+              <i data-lucide="search"></i>
+              <input type="text" id="search-menu" placeholder="Search menu item...">
+            </div>
+          </div>
+        </header>
+        
+        <div class="order-layout">
+          <!-- Menu Side -->
+          <div class="menu-container">
+            <!-- Categories Filter -->
+            <div class="category-filters" id="category-filters">
+              <button class="filter-pill active" data-category="all">All Items</button>
+              <button class="filter-pill" data-category="Mains">Mains</button>
+              <button class="filter-pill" data-category="Sides">Sides</button>
+              <button class="filter-pill" data-category="Beverages">Beverages</button>
+            </div>
+            
+            <!-- Items Grid -->
+            <div class="items-grid" id="items-grid">
+              <!-- Rendered Dynamically in app.js -->
+            </div>
+          </div>
+          
+          <!-- Billing Cart Side -->
+          <div class="cart-container">
+            <div class="cart-header">
+              <h3>Current Order</h3>
+              <span class="cart-count" id="cart-count-badge">0 items</span>
+            </div>
+            
+            <!-- Cart Items -->
+            <div class="cart-items" id="cart-items">
+              <!-- Rendered Dynamically in app.js -->
+              <div class="empty-cart-state">
+                <i data-lucide="shopping-cart"></i>
+                <p>Cart is empty.<br>Tap items to add.</p>
+              </div>
+            </div>
+            
+            <!-- Cart Summary & Actions -->
+            <div class="cart-footer">
+              <div class="bill-row">
+                <span>Subtotal</span>
+                <span id="bill-subtotal">₹0.00</span>
+              </div>
+              <div class="bill-row">
+                <span>GST (5%)</span>
+                <span id="bill-tax">₹0.00</span>
+              </div>
+              <hr class="divider">
+              <div class="bill-row total">
+                <span>Grand Total</span>
+                <span id="bill-total">₹0.00</span>
+              </div>
+              
+              <div class="cart-actions">
+                <button class="btn btn-secondary" id="btn-clear-cart" title="Clear all items">
+                  <i data-lucide="trash-2"></i>
+                  <span>Clear</span>
+                </button>
+                <button class="btn btn-secondary" id="btn-print-bill" title="Print physical bill">
+                  <i data-lucide="printer"></i>
+                  <span>Print</span>
+                </button>
+                <button class="btn btn-primary btn-grow" id="btn-pay-now">
+                  <i data-lucide="credit-card"></i>
+                  <span>Pay Now</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Tab 2: Manage Menu (CRUD) -->
+      <section id="tab-menu" class="tab-pane">
+        <header class="view-header">
+          <div class="header-left">
+            <h2>Manage Menu</h2>
+            <p class="subtitle">Add, edit, or remove menu items</p>
+          </div>
+          <div class="header-right">
+            <button class="btn btn-primary" id="btn-add-item">
+              <i data-lucide="plus"></i>
+              <span>Add Menu Item</span>
+            </button>
+          </div>
+        </header>
+        
+        <div class="crud-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th width="80">Image</th>
+                <th>Item Name</th>
+                <th>Category</th>
+                <th class="text-right">Price</th>
+                <th width="150" class="text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="crud-menu-table-body">
+              <!-- Rendered Dynamically in app.js -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+      
+      <!-- Tab 3: Sales Dashboard (Reports) -->
+      <section id="tab-reports" class="tab-pane">
+        <header class="view-header">
+          <div class="header-left">
+            <h2>Sales Dashboard</h2>
+            <p class="subtitle">Overview of orders, revenue, and product sales</p>
+          </div>
+          <div class="header-right">
+            <div class="date-filter">
+              <i data-lucide="calendar"></i>
+              <span id="sales-report-period">June 2026</span>
+            </div>
+          </div>
+        </header>
+        
+        <div class="reports-layout">
+          <!-- Metrics Overview Cards -->
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="card-icon revenue">
+                <i data-lucide="indian-rupee"></i>
+              </div>
+              <div class="card-details">
+                <span class="label">Monthly Revenue</span>
+                <h3 id="stat-revenue">₹0.00</h3>
+                <span class="sub-label trend-up"><i data-lucide="trending-up"></i> +12% from last month</span>
+              </div>
+            </div>
+            
+            <div class="metric-card">
+              <div class="card-icon orders">
+                <i data-lucide="check-square"></i>
+              </div>
+              <div class="card-details">
+                <span class="label">Total Orders</span>
+                <h3 id="stat-orders">0</h3>
+                <span class="sub-label text-muted">Completed tickets</span>
+              </div>
+            </div>
+            
+            <div class="metric-card">
+              <div class="card-icon average">
+                <i data-lucide="receipt"></i>
+              </div>
+              <div class="card-details">
+                <span class="label">Avg Order Value</span>
+                <h3 id="stat-avg-bill">₹0.00</h3>
+                <span class="sub-label text-muted">Per customer bill</span>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="card-icon popular">
+                <i data-lucide="award"></i>
+              </div>
+              <div class="card-details">
+                <span class="label">Top Selling Item</span>
+                <h3 id="stat-top-item">-</h3>
+                <span class="sub-label text-muted">Most popular this month</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Charts Section -->
+          <div class="charts-grid">
+            <div class="chart-box card">
+              <div class="chart-header">
+                <h4>Daily Sales Trend</h4>
+                <span class="badge">Current Month</span>
+              </div>
+              <div class="chart-body" id="trend-chart-container">
+                <!-- Inline SVG Chart Rendered Dynamically in app.js -->
+              </div>
+            </div>
+            
+            <div class="chart-box card">
+              <div class="chart-header">
+                <h4>Sales by Category</h4>
+                <span class="badge">Share %</span>
+              </div>
+              <div class="chart-body" id="category-chart-container">
+                <!-- Dynamic SVG Doughnut/Pie representation -->
+              </div>
+            </div>
+          </div>
+          
+          <!-- Recent Transactions Table -->
+          <div class="transactions-box card">
+            <div class="chart-header">
+              <h4>Order Sales History</h4>
+              <div class="search-bar compact">
+                <i data-lucide="search"></i>
+                <input type="text" id="search-transactions" placeholder="Search orders...">
+              </div>
+            </div>
+            <div class="transactions-table-wrapper">
+              <table class="data-table compact">
+                <thead>
+                  <tr>
+                    <th>Order ID</th>
+                    <th>Date & Time</th>
+                    <th>Items Purchased</th>
+                    <th class="text-right">Total Bill</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="sales-history-table-body">
+                  <!-- Rendered Dynamically in app.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+    </main>
+  </div>
+  
+  <!-- MODAL 1: Add / Edit Menu Item -->
+  <div class="modal-overlay" id="modal-menu-form">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-menu-title">Add Menu Item</h3>
+        <button class="btn-close" id="btn-close-menu-modal">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <form id="menu-item-form">
+        <input type="hidden" id="menu-item-id">
+        <div class="form-group">
+          <label for="menu-item-name">Item Name *</label>
+          <input type="text" id="menu-item-name" placeholder="e.g. Ghee Roast Dosa" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="menu-item-category">Category *</label>
+            <select id="menu-item-category" required>
+              <option value="Mains">Mains</option>
+              <option value="Sides">Sides</option>
+              <option value="Beverages">Beverages</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="menu-item-price">Price (₹) *</label>
+            <input type="number" id="menu-item-price" min="1" step="0.5" placeholder="e.g. 80" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="menu-item-image">Image URL</label>
+          <input type="url" id="menu-item-image" placeholder="https://images.unsplash.com/... or blank for default">
+          <small class="form-help">Leave empty to use a premium default food icon.</small>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="btn-cancel-menu-modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Item</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <!-- MODAL 2: Checkout & UPI QR Code Payment -->
+  <div class="modal-overlay" id="modal-payment">
+    <div class="modal-card modal-qr-card">
+      <div class="modal-header">
+        <h3>Pay Now - UPI Transfer</h3>
+        <button class="btn-close" id="btn-close-payment-modal">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="payment-content">
+        <p class="payment-instruction">Scan the QR code with any UPI app (GPay, PhonePe, Paytm, BHIM) to complete payment.</p>
+        
+        <!-- Premium Designed UPI QR Display -->
+        <div class="qr-container">
+          <div class="qr-box">
+            <!-- Dynamic SVG QR code generated in app.js -->
+            <div id="payment-qr-svg"></div>
+            <div class="qr-center-logo">
+              <i data-lucide="indian-rupee"></i>
+            </div>
+          </div>
+          <div class="qr-amount-pill">
+            <span>Amount Due:</span>
+            <strong id="qr-total-amount">₹0.00</strong>
+          </div>
+        </div>
+        
+        <div class="upi-merchant-details">
+          <div class="upi-row">
+            <span class="label">Merchant:</span>
+            <span class="value">DAKSHIN FLAVORS RESTAURANT</span>
+          </div>
+          <div class="upi-row">
+            <span class="label">UPI ID:</span>
+            <span class="value select-all">dakshinflavors@okaxis</span>
+          </div>
+          <div class="upi-row">
+            <span class="label">Transaction Ref:</span>
+            <span class="value" id="qr-ref-id">TXN12345678</span>
+          </div>
+        </div>
+        
+        <!-- Live status mockup -->
+        <div class="payment-status">
+          <span class="spinner"></span>
+          <span>Waiting for payment verification...</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="btn-cancel-payment">Cancel</button>
+        <button class="btn btn-primary" id="btn-confirm-payment">
+          <i data-lucide="check-circle-2"></i>
+          <span>Confirm Payment & Print</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Hidden Receipt Template for Thermal Printing -->
+  <div id="print-receipt-container">
+    <!-- Rendered Dynamically before window.print() is called -->
+  </div>
+  
+  <!-- JS Script -->
+  <script src="app.js"></script>
+</body>
+</html>
